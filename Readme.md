@@ -2,7 +2,7 @@
 
 ## 效果
 
-<image alt="效果图" src="/images/thumbwave.gif?raw=true" width="300px">
+<image alt="效果图" src="/thumbwave.gif?raw=true" width="300px">
 
 ## 如何使用
 
