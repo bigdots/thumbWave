@@ -1,4 +1,6 @@
-# thumbWave 小程序直播点赞效果组件
+# thumbWave 高性能小程序直播点赞效果组件
+
+采用 微信小程序最新版 canvas2d Api 和 requestAnimationFrame 实现的高性能直播点赞特效
 
 ## 效果
 
