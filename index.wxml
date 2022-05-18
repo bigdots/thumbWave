@@ -1,0 +1,8 @@
+<view class="thumb_container" style="width:{{btnwidth}};height:{{btnwidth}};">
+  <view class="v-canvas">
+    <canvas id="likestar" type="2d" width="{{realWidth}}" height="{{realHeight}}" style="width: {{ width }}rpx; height: {{ height }}rpx;" class="like-fx wr-class"></canvas>
+  </view>
+  <view class="v-img">
+    <image src="{{btnsrc}}" class="bt-img" bindtap="handleLikeClick"></image>
+  </view>
+</view>
