@@ -2,7 +2,7 @@
 
 ## 效果
 
-![效果]('https://raw.githubusercontent.com/bigdots/thumbWave/main/images/thumbwave.gif')
+![效果]('/bigdots/thumbWave/blob/main/images/thumbwave.gif?raw=true')
 
 ## 如何使用
 
