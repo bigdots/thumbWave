@@ -2,7 +2,7 @@
 
 ## 效果
 
-![效果]('/images/thumbwave.gif?raw=true')
+![效果](/images/thumbwave.gif?raw=true 300x400)
 
 ## 如何使用
 
