@@ -12,7 +12,7 @@ Component({
     _likeImgList: [],
     _canvas: null,
     count: 0,
-    _iconWidth: 100,
+    _iconWidth: 80,
     _thumbCount: 0,
   },
   properties: {
@@ -88,9 +88,9 @@ Component({
 
     // 加载点赞点赞飘动icon
     loadLikeIcons(canvas) {
-      for (let i = 1; i < 6; i++) {
+      for (let i = 1; i < 7; i++) {
         const likeImgae = canvas.createImage()
-        likeImgae.src = `./images/thumb${i}.svg`
+        likeImgae.src = `./images/thumb${i}.png`
         likeImgae.onload = () => {
           this.data._likeImgList.push(likeImgae)
         }
@@ -120,12 +120,26 @@ Component({
       return Math.floor(Math.random() * (max - min + 1)) + min
     },
 
+    getRandomIntsole(count, min, max) {
+      const arr = []
+      while (arr.length < count) {
+        const val = this.getRandomInt(min, max)
+        if (!arr.includes(val)) {
+          arr.push(val)
+        }
+      }
+
+      return arr
+    },
+
     /**点赞函数，参数 count 表示一次点赞同时出现的气泡数量*/
     likeClick(count) {
       const { length } = this.data._likeImgList
       const curId = new Date().getTime()
+      // 获取本次需要用到的icon索引
+      const imgs = this.getRandomIntsole(count, 0, length - 1)
       for (let i = 0; i < count; i++) {
-        const image = this.data._likeImgList[this.getRandomInt(0, length - 1)]
+        const image = this.data._likeImgList[imgs[i]]
         const anmationData = {
           id: curId + i,
           timer: 0, // 定时器
@@ -140,7 +154,6 @@ Component({
           },
           width: this.data._iconWidth * this.getRandom(0.9, 1.1),
         }
-        // console.error(this.data._canvas)
         if (Object.keys(this.data._queue).length > 0) {
           this.data._queue[anmationData.id] = anmationData
         } else {
@@ -161,6 +174,7 @@ Component({
       const { t } = factor
 
       /*贝塞尔曲线，计算多项式系数*/
+      //   B_{3}(t) = (1 - t)^3P_0 + 3t(1 - t)^2P_1 + 3t^2(1 - t)P_2 + t^3P_3
       const cx1 = 3 * (p1.x - p0.x)
       const bx1 = 3 * (p2.x - p1.x) - cx1
       const ax1 = p3.x - p0.x - cx1 - bx1
@@ -175,6 +189,17 @@ Component({
         x,
         y,
       }
+    },
+
+    generatePathDataReverse() {
+      // const list = this.generatePathData()
+      // console.debug(list)
+      // list.forEach((item, index, arr) => {
+      //   console.debug(item.x, -item.x)
+      //   arr[index].x = -item.x
+      // })
+      // console.debug(list)
+      // return list
     },
 
     generatePathData() {
