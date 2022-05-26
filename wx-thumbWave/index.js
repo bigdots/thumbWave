@@ -14,6 +14,9 @@ Component({
     count: 0,
     _iconWidth: 80,
     _thumbCount: 0,
+    _preTimestamp: 0,
+    _lastTimestamp: 0,
+    _dt: 0,
   },
   properties: {
     btnwidth: {
@@ -26,12 +29,34 @@ Component({
     },
     btnsrc: {
       type: String,
-      value: './images/thumb.svg',
+      value: './images/like.png',
     },
-    thumbCount: Number,
+    wavetype: Number,
+    icons: {
+      type: Array,
+      value: [
+        './images/thumb1.png',
+        './images/thumb2.png',
+        './images/thumb3.png',
+        './images/thumb4.png',
+        './images/thumb5.png',
+        './images/thumb6.png',
+        './images/thumb7.png',
+        './images/thumb8.png',
+        './images/thumb9.png',
+        './images/thumb10.png',
+        './images/thumb11.png',
+      ],
+    },
   },
   observers: {
-    thumbCount(val) {
+    /**
+     * 点赞类型
+     * @param {*} 1 气泡少
+     * @param {*} 2 气泡多
+     * @returns
+     */
+    wavetype(val) {
       if (val <= 0) {
         return
       }
@@ -62,6 +87,31 @@ Component({
   },
 
   methods: {
+    // 阻止canvas的点击冒泡
+    canvasclick() {
+      return false
+    },
+    /**
+     * 计算每帧间隔
+     */
+    calDt() {
+      if (!this.data._preTimestamp) {
+        this.data._preTimestamp = new Date().getTime()
+        return
+      }
+
+      if (!this.data._lastTimestamp) {
+        this.data._lastTimestamp = new Date().getTime()
+        return
+      }
+
+      if (!this.data._dt) {
+        const dt = (this.data._lastTimestamp - this.data._preTimestamp) / 1000
+        this.data._dt = dt < 0.017 ? dt : 0.017
+      }
+
+      return this.data._dt
+    },
     async initCanvas() {
       // 创建canvas上下文
       const res = await this.queryNode('#likestar')
@@ -88,14 +138,19 @@ Component({
 
     // 加载点赞点赞飘动icon
     loadLikeIcons(canvas) {
-      for (let i = 1; i < 7; i++) {
+      this.properties.icons.forEach((icon) => {
         const likeImgae = canvas.createImage()
-        likeImgae.src = `./images/thumb${i}.png`
+        likeImgae.src = icon
         likeImgae.onload = () => {
           this.data._likeImgList.push(likeImgae)
         }
-      }
+      })
     },
+    /**
+     * 查询节点
+     * @param {*} selector
+     * @returns
+     */
     queryNode(selector) {
       return new Promise((resolve, reject) => {
         const query = wx.createSelectorQuery().in(this)
@@ -107,19 +162,31 @@ Component({
           })
       })
     },
-    /**点赞个数变化 */
-    handleLikeClick(e) {
-      this.triggerEvent('thumbclick', e.detail)
-    },
-
+    /**
+     * 获取随机数
+     * @param {*} min
+     * @param {*} max
+     * @returns
+     */
     getRandom(min, max) {
       return Math.random() * (max - min) + min
     },
-
+    /**
+     * 获取随机整数
+     * @param {*} min
+     * @param {*} max
+     * @returns
+     */
     getRandomInt(min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min
     },
-
+    /**
+     * 在区间内获取几个随机整数
+     * @param {*} count
+     * @param {*} min
+     * @param {*} max
+     * @returns
+     */
     getRandomIntsole(count, min, max) {
       const arr = []
       while (arr.length < count) {
@@ -149,7 +216,7 @@ Component({
             : this.generatePathData(), // 路径
           image: image,
           factor: {
-            speed: this.getRandom(0.01, 0.014), // 运动速度，值越小越慢
+            speed: this.getRandom(0.8, 0.9), // 运动速度，值越小越慢
             t: 0, //  贝塞尔函数系数
           },
           width: this.data._iconWidth * this.getRandom(0.9, 1.1),
@@ -192,14 +259,25 @@ Component({
     },
 
     generatePathDataReverse() {
-      // const list = this.generatePathData()
-      // console.debug(list)
-      // list.forEach((item, index, arr) => {
-      //   console.debug(item.x, -item.x)
-      //   arr[index].x = -item.x
-      // })
-      // console.debug(list)
-      // return list
+      const { realWidth, realHeight } = this.data
+      const p0 = {
+        x: this.getRandom(-0.7, -0.6) * realWidth,
+        y: realHeight,
+      }
+      const p1 = {
+        x: this.getRandom(-0.5, 0.2) * realWidth,
+        y: this.getRandom(0.6, 0.85) * realHeight,
+      }
+      const p2 = {
+        x: this.getRandom(-1, -0.7) * realWidth,
+        y: this.getRandom(0.25, 0.5) * realHeight,
+      }
+      const p3 = {
+        x: this.getRandom(-0.7, 0.04) * realWidth,
+        y: this.getRandom(0, 0.15) * realHeight,
+      }
+      // console.debug('ref', [p0, p1, p2, p3])
+      return [p0, p1, p2, p3]
     },
 
     generatePathData() {
@@ -220,6 +298,7 @@ Component({
         x: this.getRandom(0.04, 0.7) * realWidth,
         y: this.getRandom(0, 0.15) * realHeight,
       }
+      console.debug('z', [p0, p1, p2, p3])
       return [p0, p1, p2, p3]
     },
     /**点赞动画 */
@@ -233,7 +312,7 @@ Component({
         )
 
         const { speed } = anmationData.factor
-        anmationData.factor.t += speed
+        anmationData.factor.t += speed * this.data._dt
 
         let curWidth = anmationData.width
         // console.error(x, curWidth, y)
@@ -272,6 +351,8 @@ Component({
       if (Object.keys(this.data._queue).length > 0) {
         // 每20ms刷新一次图层
         this.data.aniFrameId = this.data._canvas.requestAnimationFrame(() => {
+          this.calDt()
+          // console.debug(this.data._dt)
           this.data._ctx.clearRect(0, 0, realWidth, realHeight)
           this.bubbleAnimate()
         })

@@ -1,8 +1,8 @@
-<view class="thumb_container" style="width:{{btnwidth}};height:{{btnwidth}};">
-  <view class="v-canvas">
-    <canvas id="likestar" type="2d" width="{{realWidth}}" height="{{realHeight}}" style="width: {{ width }}rpx; height: {{ height }}rpx;" class="like-fx wr-class"></canvas>
+<view class="thumb_container" style="width:{{btnwidth}};height:{{btnwidth}};" catchtap="" capture-catch:tap="">
+  <view class="v-canvas" catch:tap="canvasclick">
+    <canvas id="likestar" type="2d" width="{{realWidth}}" height="{{realHeight}}" style="width: {{ width }}rpx; height: {{ height }}rpx;"></canvas>
   </view>
-  <view class="v-img">
-    <image src="{{btnsrc}}" class="bt-img" bindtap="handleLikeClick"></image>
+  <view class="v-img" hover-class="like-hover">
+    <image src="{{btnsrc}}" class="bt-img"></image>
   </view>
 </view>
