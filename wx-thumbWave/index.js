@@ -31,7 +31,8 @@ Component({
       type: String,
       value: './images/like.png',
     },
-    wavetype: Number,
+    // wavetype: Number,
+    thumbNums: Number, // 点赞个数
     icons: {
       type: Array,
       value: [
@@ -56,16 +57,21 @@ Component({
      * @param {*} 2 气泡多
      * @returns
      */
-    wavetype(val) {
-      if (val <= 0) {
+    thumbNums(num) {
+      const diff = num - this.data._thumbCount
+
+      if (diff <= 0) {
         return
       }
-      if (this.data._ctx && this.data._likeImgList.length) {
-        // 点赞增加少的时候，产生气泡少，点赞增加多的时候，产生气泡多
-        const count =
-          val > 1 ? this.getRandomInt(2, 6) : this.getRandomInt(1, 3)
-        this.likeClick(count)
+
+      if (!this.data._ctx || this.data._likeImgList.length <= 0) {
+        return
       }
+
+      // 点赞增加少的时候，产生气泡少，点赞增加多的时候，产生气泡多
+      const count = diff > 3 ? this.getRandomInt(2, 6) : this.getRandomInt(1, 3)
+      this.likeClick(count)
+      this._thumbCount = num
     },
   },
   lifetimes: {
@@ -298,7 +304,7 @@ Component({
         x: this.getRandom(0.04, 0.7) * realWidth,
         y: this.getRandom(0, 0.15) * realHeight,
       }
-      console.debug('z', [p0, p1, p2, p3])
+      // console.debug('z', [p0, p1, p2, p3])
       return [p0, p1, p2, p3]
     },
     /**点赞动画 */
