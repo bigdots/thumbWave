@@ -71,7 +71,7 @@ Component({
       // 点赞增加少的时候，产生气泡少，点赞增加多的时候，产生气泡多
       const count = diff > 3 ? this.getRandomInt(2, 6) : this.getRandomInt(1, 3)
       this.likeClick(count)
-      this._thumbCount = num
+      this.data._thumbCount = num
     },
   },
   lifetimes: {
